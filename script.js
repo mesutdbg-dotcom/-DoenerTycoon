@@ -2,10 +2,6 @@ let geld = 0;
 let geldProKlick = 1;
 let geldProSekunde = 0;
 
-let mitarbeiterGekauft = false;
-let messerGekauft = false;
-let fleischGekauft = false;
-
 const geldAnzeige = document.getElementById("money");
 const donerButton = document.getElementById("donerButton");
 
@@ -44,88 +40,75 @@ function zeigePlus(text) {
     }, 750);
 }
 
-donerButton.addEventListener("click", function () {
-    geld += geldProKlick;
-    aktualisieren();
-
-    donerButton.style.transform = "scale(1.08)";
-
-    setTimeout(function () {
-        donerButton.style.transform = "";
-    }, 100);
-
-    zeigePlus("+" + geldProKlick + " €");
-
-    if ("vibrate" in navigator) {
-        navigator.vibrate(15);
-    }
-});
-
-workerBtn.addEventListener("click", function () {
-    if (mitarbeiterGekauft) {
-        alert("Du hast bereits einen Mitarbeiter.");
-        return;
-    }
-
-    if (geld >= 50) {
-        geld -= 50;
-        geldProSekunde += 1;
-        mitarbeiterGekauft = true;
-
-        workerBtn.innerHTML = "✅ Mitarbeiter gekauft<br><small>+1 €/Sekunde</small>";
-        workerBtn.disabled = true;
-
+if (donerButton) {
+    donerButton.addEventListener("click", function () {
+        geld += geldProKlick;
         aktualisieren();
-    } else {
-        alert("Du brauchst 50 €.");
-    }
-});
 
-knifeBtn.addEventListener("click", function () {
-    if (messerGekauft) {
-        alert("Du hast das bessere Messer bereits.");
-        return;
-    }
+        donerButton.style.transform = "scale(1.08)";
 
-    if (geld >= 100) {
-        geld -= 100;
-        geldProKlick = 2;
-        messerGekauft = true;
+        setTimeout(function () {
+            donerButton.style.transform = "";
+        }, 100);
 
-        knifeBtn.innerHTML = "✅ Besseres Messer gekauft<br><small>2 €/Klick</small>";
-        knifeBtn.disabled = true;
+        zeigePlus("+" + geldProKlick + " €");
+    });
+}
 
-        aktualisieren();
-    } else {
-        alert("Du brauchst 100 €.");
-    }
-});
+if (workerBtn) {
+    workerBtn.addEventListener("click", function () {
+        if (geld >= 50) {
+            geld -= 50;
+            geldProSekunde += 1;
 
-meatBtn.addEventListener("click", function () {
-    if (fleischGekauft) {
-        alert("Du hast Premium-Fleisch bereits.");
-        return;
-    }
+            workerBtn.innerHTML =
+                "✅ Mitarbeiter gekauft<br><small>+1 €/Sekunde</small>";
 
-    if (geld >= 250) {
-        geld -= 250;
-        geldProKlick = 5;
-        fleischGekauft = true;
+            workerBtn.disabled = true;
+            aktualisieren();
+        } else {
+            alert("Du brauchst 50 €.");
+        }
+    });
+}
 
-        meatBtn.innerHTML = "✅ Premium-Fleisch gekauft<br><small>5 €/Klick</small>";
-        meatBtn.disabled = true;
+if (knifeBtn) {
+    knifeBtn.addEventListener("click", function () {
+        if (geld >= 100) {
+            geld -= 100;
+            geldProKlick = 2;
 
-        aktualisieren();
-    } else {
-        alert("Du brauchst 250 €.");
-    }
-});
+            knifeBtn.innerHTML =
+                "✅ Besseres Messer gekauft<br><small>2 €/Klick</small>";
+
+            knifeBtn.disabled = true;
+            aktualisieren();
+        } else {
+            alert("Du brauchst 100 €.");
+        }
+    });
+}
+
+if (meatBtn) {
+    meatBtn.addEventListener("click", function () {
+        if (geld >= 250) {
+            geld -= 250;
+            geldProKlick = 5;
+
+            meatBtn.innerHTML =
+                "✅ Premium-Fleisch gekauft<br><small>5 €/Klick</small>";
+
+            meatBtn.disabled = true;
+            aktualisieren();
+        } else {
+            alert("Du brauchst 250 €.");
+        }
+    });
+}
 
 setInterval(function () {
-    if (geldProSekunde > 0) {
-        geld += geldProSekunde;
-        aktualisieren();
-    }
+    geld += geldProSekunde;
+    aktualisieren();
 }, 1000);
 
 aktualisieren();
