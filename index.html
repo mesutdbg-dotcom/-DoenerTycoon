@@ -9,14 +9,36 @@
 
 <body>
 
+<div id="nameOverlay">
+    <div id="nameBox">
+        <h2>🥙 Willkommen bei Döner Tycoon!</h2>
+        <p>Wie soll dein Dönerladen heißen?</p>
+
+        <input
+            id="shopNameInput"
+            type="text"
+            maxlength="24"
+            placeholder="z. B. Mesut's Döner"
+        >
+
+        <button id="startGameBtn">
+            ✅ Spiel starten
+        </button>
+    </div>
+</div>
+
 <header>
-    <h1>🥙 Döner Tycoon</h1>
+    <h1 id="shopTitle">🥙 Döner Tycoon</h1>
     <p>Vom kleinen Imbiss zum Döner-König!</p>
 </header>
 
 <main>
 
     <div id="levelAnzeige"></div>
+
+    <div id="incomeAnzeige">
+        ⚡ 0 € pro Sekunde
+    </div>
 
     <h2 id="money">0 €</h2>
 
@@ -50,7 +72,7 @@
 
 </main>
 
-<script src="script.js?v=18"></script>
+<script src="script.js?v=19"></script>
 
 </body>
 </html>
