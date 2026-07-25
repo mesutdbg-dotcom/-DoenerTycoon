@@ -1,101 +1,99 @@
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:linear-gradient(180deg,#ffb347,#ff6b00);
+    text-align:center;
+    color:white;
 }
 
-body {
-    min-height: 100vh;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(180deg, #ffb347, #ff7a18);
-    color: #ffffff;
-    text-align: center;
+header{
+    padding:25px;
 }
 
-header {
-    padding: 30px 15px 20px;
+h1{
+    font-size:42px;
+    margin-bottom:5px;
 }
 
-header h1 {
-    font-size: 34px;
-    margin-bottom: 8px;
+#money{
+    font-size:42px;
+    margin:20px 0;
+    text-shadow:2px 2px 6px rgba(0,0,0,.3);
 }
 
-header p {
-    font-size: 16px;
-    opacity: 0.9;
+#levelAnzeige{
+    width:90%;
+    max-width:500px;
+    margin:20px auto;
+    background:white;
+    color:#333;
+    border-radius:18px;
+    padding:15px;
+    box-shadow:0 8px 20px rgba(0,0,0,.25);
 }
 
-main {
-    width: calc(100% - 30px);
-    max-width: 420px;
-    margin: 20px auto;
-    padding: 30px 20px;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 24px;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+#donerButton{
+    width:180px;
+    height:180px;
+    border:none;
+    border-radius:50%;
+    font-size:90px;
+    cursor:pointer;
+    background:white;
+    box-shadow:0 12px 25px rgba(0,0,0,.3);
+    transition:.15s;
 }
 
-#money {
-    font-size: 46px;
-    margin-bottom: 25px;
+#donerButton:hover{
+    transform:scale(1.05);
 }
 
-#donerButton {
-    width: 190px;
-    height: 190px;
-    border: none;
-    border-radius: 50%;
-    background: #ffffff;
-    font-size: 95px;
-    cursor: pointer;
-    box-shadow: 0 10px 0 #d9d9d9;
-    transition: transform 0.08s, box-shadow 0.08s;
-    -webkit-tap-highlight-color: transparent;
-}
-
-#donerButton:active {
-    transform: translateY(8px) scale(0.97);
-    box-shadow: 0 2px 0 #d9d9d9;
-}
-
-main p {
-    margin-top: 28px;
-    font-size: 17px;
-    line-height: 1.5;
-}
 #shop{
-    margin-top:40px;
-    text-align:left;
+    width:90%;
+    max-width:500px;
+    margin:35px auto;
 }
 
 #shop h2{
-    text-align:center;
     margin-bottom:20px;
 }
 
 #shop button{
     width:100%;
-    padding:18px;
     margin-bottom:15px;
+    padding:18px;
     border:none;
     border-radius:18px;
-    background:#ffffff;
+    background:white;
     color:#333;
     font-size:20px;
     font-weight:bold;
     cursor:pointer;
-    transition:0.2s;
-    box-shadow:0 6px 15px rgba(0,0,0,.15);
+    transition:.2s;
+    box-shadow:0 8px 18px rgba(0,0,0,.2);
 }
 
-#shop button:active{
-    transform:scale(0.97);
+#shop button:hover{
+    transform:translateY(-3px);
 }
 
-#shop small{
+#shop button:disabled{
+    background:#bdbdbd;
+    color:white;
+}
+
+small{
     display:block;
     margin-top:8px;
     color:#666;
-    font-size:15px;
+}
+
+@keyframes schweben{
+    0%{transform:translateY(0);}
+    50%{transform:translateY(-8px);}
+    100%{transform:translateY(0);}
+}
+
+#donerButton{
+    animation:schweben 2s infinite;
 }
