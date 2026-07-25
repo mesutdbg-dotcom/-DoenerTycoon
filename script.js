@@ -677,3 +677,294 @@ window.addEventListener("beforeunload", () => {
 ranglisteErstellen();
 ladenNameAnzeigen();
 aktualisieren();
+
+/* ======================================== */
+/* SHOP-ERWEITERUNG – STUFE 2               */
+/* ======================================== */
+
+let knife2Gekauft = false;
+let meat2Gekauft = false;
+
+/*
+Gespeicherte Stufe-2-Upgrades laden
+*/
+
+try {
+    const shopErweiterungSpeicher =
+        JSON.parse(localStorage.getItem("doenerTycoonShop2")) || {};
+
+    knife2Gekauft =
+        Boolean(shopErweiterungSpeicher.knife2Gekauft);
+
+    meat2Gekauft =
+        Boolean(shopErweiterungSpeicher.meat2Gekauft);
+} catch (fehler) {
+    console.error(
+        "Shop-Erweiterung konnte nicht geladen werden:",
+        fehler
+    );
+}
+
+/*
+Alte Spielstände korrigieren:
+
+Premium-Fleisch I soll zusammen mit Messer I
+insgesamt 7 €/Klick ergeben.
+*/
+
+if (knifeGekauft && meatGekauft && geldProKlick < 7) {
+    geldProKlick = 7;
+}
+
+if (knife2Gekauft && geldProKlick < 15) {
+    geldProKlick = 15;
+}
+
+if (meat2Gekauft && geldProKlick < 25) {
+    geldProKlick = 25;
+}
+
+/*
+Zusätzliche Upgrades speichern
+*/
+
+function shopErweiterungSpeichern() {
+    localStorage.setItem(
+        "doenerTycoonShop2",
+        JSON.stringify({
+            knife2Gekauft,
+            meat2Gekauft
+        })
+    );
+}
+
+/*
+Stufe-2-Buttons erstellen
+*/
+
+const shopBereich = document.getElementById("shop");
+
+const knife2Btn = document.createElement("button");
+knife2Btn.id = "knife2Btn";
+
+const meat2Btn = document.createElement("button");
+meat2Btn.id = "meat2Btn";
+
+shopBereich.appendChild(knife2Btn);
+shopBereich.appendChild(meat2Btn);
+
+/*
+Shop-Anzeige aktualisieren
+*/
+
+function shopStufe2Aktualisieren() {
+    /*
+    Messer I
+    */
+
+    if (knifeGekauft) {
+        knifeBtn.innerHTML =
+            "✅ Besseres Messer gekauft" +
+            "<br><small>2 €/Klick</small>";
+
+        knifeBtn.disabled = true;
+    }
+
+    /*
+    Premium-Fleisch I
+    Erst nach Messer I verfügbar
+    */
+
+    if (!knifeGekauft) {
+        meatBtn.innerHTML =
+            "🔒 Premium-Fleisch" +
+            "<br><small>Erst Messer kaufen</small>";
+
+        meatBtn.disabled = true;
+    } else if (!meatGekauft) {
+        meatBtn.innerHTML =
+            "🥩 Premium-Fleisch" +
+            "<br><small>250 € • insgesamt 7 €/Klick</small>";
+
+        meatBtn.disabled = false;
+    } else {
+        meatBtn.innerHTML =
+            "✅ Premium-Fleisch gekauft" +
+            "<br><small>7 €/Klick</small>";
+
+        meatBtn.disabled = true;
+    }
+
+    /*
+    Messer II
+    Erst nach Premium-Fleisch I verfügbar
+    */
+
+    if (!meatGekauft) {
+        knife2Btn.innerHTML =
+            "🔒 Profi-Messer II" +
+            "<br><small>Erst Premium-Fleisch kaufen</small>";
+
+        knife2Btn.disabled = true;
+    } else if (!knife2Gekauft) {
+        knife2Btn.innerHTML =
+            "⚔️ Profi-Messer II" +
+            "<br><small>1.500 € • insgesamt 15 €/Klick</small>";
+
+        knife2Btn.disabled = false;
+    } else {
+        knife2Btn.innerHTML =
+            "✅ Profi-Messer II gekauft" +
+            "<br><small>15 €/Klick</small>";
+
+        knife2Btn.disabled = true;
+    }
+
+    /*
+    Premium-Fleisch II
+    Erst nach Messer II verfügbar
+    */
+
+    if (!knife2Gekauft) {
+        meat2Btn.innerHTML =
+            "🔒 Luxus-Fleisch II" +
+            "<br><small>Erst Profi-Messer II kaufen</small>";
+
+        meat2Btn.disabled = true;
+    } else if (!meat2Gekauft) {
+        meat2Btn.innerHTML =
+            "🥩 Luxus-Fleisch II" +
+            "<br><small>5.000 € • insgesamt 25 €/Klick</small>";
+
+        meat2Btn.disabled = false;
+    } else {
+        meat2Btn.innerHTML =
+            "✅ Luxus-Fleisch II gekauft" +
+            "<br><small>25 €/Klick</small>";
+
+        meat2Btn.disabled = true;
+    }
+}
+
+/*
+Bestehende Aktualisieren-Funktion erweitern
+*/
+
+const originalAktualisieren = aktualisieren;
+
+aktualisieren = function () {
+    /*
+    Fehler der alten Premium-Fleisch-Logik korrigieren
+    */
+
+    if (
+        knifeGekauft &&
+        meatGekauft &&
+        !knife2Gekauft &&
+        geldProKlick < 7
+    ) {
+        geldProKlick = 7;
+    }
+
+    if (
+        knife2Gekauft &&
+        !meat2Gekauft &&
+        geldProKlick < 15
+    ) {
+        geldProKlick = 15;
+    }
+
+    if (meat2Gekauft && geldProKlick < 25) {
+        geldProKlick = 25;
+    }
+
+    originalAktualisieren();
+    shopStufe2Aktualisieren();
+    shopErweiterungSpeichern();
+};
+
+/*
+Premium-Fleisch I auf 7 €/Klick korrigieren
+
+Der vorhandene Event-Listener setzt zuerst 5.
+Dieser Listener läuft direkt danach und korrigiert auf 7.
+*/
+
+meatBtn.addEventListener("click", () => {
+    if (
+        knifeGekauft &&
+        meatGekauft &&
+        !knife2Gekauft
+    ) {
+        geldProKlick = 7;
+
+        aktualisieren();
+        onlineSpeichern();
+    }
+});
+
+/*
+Messer II kaufen
+*/
+
+knife2Btn.addEventListener("click", () => {
+    if (!meatGekauft || knife2Gekauft) {
+        return;
+    }
+
+    const preis = 1500;
+
+    if (geld >= preis) {
+        geld -= preis;
+
+        geldProKlick = 15;
+        knife2Gekauft = true;
+
+        zeigePlus("⚔️ 15 €/Klick");
+
+        aktualisieren();
+        onlineSpeichern();
+    } else {
+        alert(
+            "Du brauchst " +
+            preis.toLocaleString("de-DE") +
+            " €."
+        );
+    }
+});
+
+/*
+Premium-Fleisch II kaufen
+*/
+
+meat2Btn.addEventListener("click", () => {
+    if (!knife2Gekauft || meat2Gekauft) {
+        return;
+    }
+
+    const preis = 5000;
+
+    if (geld >= preis) {
+        geld -= preis;
+
+        geldProKlick = 25;
+        meat2Gekauft = true;
+
+        zeigePlus("🥩 25 €/Klick");
+
+        aktualisieren();
+        onlineSpeichern();
+    } else {
+        alert(
+            "Du brauchst " +
+            preis.toLocaleString("de-DE") +
+            " €."
+        );
+    }
+});
+
+/*
+Shop nach dem Einfügen sofort richtig anzeigen
+*/
+
+aktualisieren();
