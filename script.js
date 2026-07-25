@@ -9,6 +9,8 @@ let mitarbeiterPreis = 50;
 let knifeGekauft = false;
 let meatGekauft = false;
 
+let ladenName = "";
+
 const spielstand = localStorage.getItem("doenerTycoon");
 
 if (spielstand) {
@@ -18,6 +20,7 @@ if (spielstand) {
         geld = Number(daten.geld) || 0;
         geldProKlick = Number(daten.geldProKlick) || 1;
         geldProSekunde = Number(daten.geldProSekunde) || 0;
+        gesamtUmsatz = Number(daten.gesamtUmsatz) || 0;
 
         mitarbeiter = Number(daten.mitarbeiter) || 0;
         mitarbeiterPreis = Number(daten.mitarbeiterPreis) || 50;
@@ -25,33 +28,25 @@ if (spielstand) {
         knifeGekauft = Boolean(daten.knifeGekauft);
         meatGekauft = Boolean(daten.meatGekauft);
 
-        gesamtUmsatz =
-            Number(daten.gesamtUmsatz) ||
-            Number(daten.geld) ||
-            0;
+        ladenName = daten.ladenName || "";
     } catch (fehler) {
         console.log("Spielstand konnte nicht geladen werden.");
     }
 }
 
 const geldAnzeige = document.getElementById("money");
+const incomeAnzeige = document.getElementById("incomeAnzeige");
+const levelAnzeige = document.getElementById("levelAnzeige");
+
 const donerButton = document.getElementById("donerButton");
 const workerBtn = document.getElementById("workerBtn");
 const knifeBtn = document.getElementById("knifeBtn");
 const meatBtn = document.getElementById("meatBtn");
 
-const levelAnzeige = document.createElement("div");
-levelAnzeige.id = "levelAnzeige";
-
-levelAnzeige.style.background = "rgba(255, 255, 255, 0.92)";
-levelAnzeige.style.color = "#333";
-levelAnzeige.style.padding = "15px";
-levelAnzeige.style.margin = "20px 0";
-levelAnzeige.style.borderRadius = "18px";
-levelAnzeige.style.boxShadow = "0 6px 15px rgba(0,0,0,0.15)";
-levelAnzeige.style.fontWeight = "bold";
-
-geldAnzeige.parentNode.insertBefore(levelAnzeige, geldAnzeige);
+const nameOverlay = document.getElementById("nameOverlay");
+const shopNameInput = document.getElementById("shopNameInput");
+const startGameBtn = document.getElementById("startGameBtn");
+const shopTitle = document.getElementById("shopTitle");
 
 const levelListe = [
     {
@@ -106,9 +101,19 @@ function speichern() {
             mitarbeiter,
             mitarbeiterPreis,
             knifeGekauft,
-            meatGekauft
+            meatGekauft,
+            ladenName
         })
     );
+}
+
+function ladenNameAnzeigen() {
+    if (ladenName) {
+        shopTitle.textContent = "🥙 " + ladenName;
+        nameOverlay.style.display = "none";
+    } else {
+        nameOverlay.style.display = "flex";
+    }
 }
 
 function levelAktualisieren() {
@@ -138,7 +143,7 @@ function levelAktualisieren() {
             ": " +
             level.name +
             "<br><small>Noch " +
-            Math.max(0, Math.ceil(benoetigt)) +
+            Math.max(0, Math.ceil(benoetigt)).toLocaleString("de-DE") +
             " € bis " +
             naechstesLevel.name +
             "</small>";
@@ -156,6 +161,11 @@ function levelAktualisieren() {
 function aktualisieren() {
     geldAnzeige.textContent =
         Math.floor(geld).toLocaleString("de-DE") + " €";
+
+    incomeAnzeige.textContent =
+        "⚡ " +
+        geldProSekunde.toLocaleString("de-DE") +
+        " € pro Sekunde";
 
     workerBtn.innerHTML =
         "👨‍🍳 Mitarbeiter (" +
@@ -211,6 +221,25 @@ function zeigePlus(text) {
         plus.remove();
     }, 700);
 }
+
+startGameBtn.addEventListener("click", () => {
+    const eingegebenerName = shopNameInput.value.trim();
+
+    if (eingegebenerName.length < 2) {
+        alert("Bitte gib einen Namen mit mindestens 2 Zeichen ein.");
+        return;
+    }
+
+    ladenName = eingegebenerName;
+    ladenNameAnzeigen();
+    speichern();
+});
+
+shopNameInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+        startGameBtn.click();
+    }
+});
 
 donerButton.addEventListener("click", () => {
     geld += geldProKlick;
@@ -287,4 +316,5 @@ setInterval(() => {
     }
 }, 1000);
 
+ladenNameAnzeigen();
 aktualisieren();
