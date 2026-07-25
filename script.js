@@ -5,6 +5,9 @@ let geldProSekunde = 0;
 let mitarbeiter = 0;
 let mitarbeiterPreis = 50;
 
+let knifeGekauft = false;
+let meatGekauft = false;
+
 const spielstand = localStorage.getItem("doenerTycoon");
 
 if (spielstand) {
@@ -13,19 +16,19 @@ if (spielstand) {
     geld = daten.geld || 0;
     geldProKlick = daten.geldProKlick || 1;
     geldProSekunde = daten.geldProSekunde || 0;
+
     mitarbeiter = daten.mitarbeiter || 0;
     mitarbeiterPreis = daten.mitarbeiterPreis || 50;
+
+    knifeGekauft = daten.knifeGekauft || false;
+    meatGekauft = daten.meatGekauft || false;
 }
 
 const geldAnzeige = document.getElementById("money");
 const donerButton = document.getElementById("donerButton");
-
 const workerBtn = document.getElementById("workerBtn");
 const knifeBtn = document.getElementById("knifeBtn");
 const meatBtn = document.getElementById("meatBtn");
-
-let knifeGekauft = false;
-let meatGekauft = false;
 
 function speichern() {
     localStorage.setItem("doenerTycoon", JSON.stringify({
@@ -33,7 +36,9 @@ function speichern() {
         geldProKlick,
         geldProSekunde,
         mitarbeiter,
-        mitarbeiterPreis
+        mitarbeiterPreis,
+        knifeGekauft,
+        meatGekauft
     }));
 }
 
@@ -43,6 +48,16 @@ function aktualisieren() {
     workerBtn.innerHTML =
         "👨‍🍳 Mitarbeiter (" + mitarbeiter + ")" +
         "<br><small>" + mitarbeiterPreis + " € • +1 €/Sekunde</small>";
+
+    if (knifeGekauft) {
+        knifeBtn.innerHTML = "✅ Messer gekauft";
+        knifeBtn.disabled = true;
+    }
+
+    if (meatGekauft) {
+        meatBtn.innerHTML = "✅ Premium-Fleisch gekauft";
+        meatBtn.disabled = true;
+    }
 
     speichern();
 }
@@ -54,7 +69,7 @@ function zeigePlus(text) {
     plus.style.position = "fixed";
     plus.style.left = "50%";
     plus.style.top = "48%";
-    plus.style.transform = "translate(-50%,-50%)";
+    plus.style.transform = "translate(-50%, -50%)";
     plus.style.fontSize = "32px";
     plus.style.fontWeight = "bold";
     plus.style.color = "#00ff66";
@@ -73,11 +88,12 @@ function zeigePlus(text) {
 
 donerButton.addEventListener("click", () => {
     geld += geldProKlick;
+    zeigePlus("+" + geldProKlick + " €");
 
     donerButton.style.transform = "scale(1.08)";
-    setTimeout(() => donerButton.style.transform = "", 100);
-
-    zeigePlus("+" + geldProKlick + " €");
+    setTimeout(() => {
+        donerButton.style.transform = "";
+    }, 100);
 
     aktualisieren();
 });
@@ -104,9 +120,6 @@ knifeBtn.addEventListener("click", () => {
         geldProKlick = 2;
         knifeGekauft = true;
 
-        knifeBtn.innerHTML = "✅ Messer gekauft";
-        knifeBtn.disabled = true;
-
         aktualisieren();
     } else {
         alert("Du brauchst 100 €.");
@@ -120,9 +133,6 @@ meatBtn.addEventListener("click", () => {
         geld -= 250;
         geldProKlick = 5;
         meatGekauft = true;
-
-        meatBtn.innerHTML = "✅ Premium-Fleisch gekauft";
-        meatBtn.disabled = true;
 
         aktualisieren();
     } else {
